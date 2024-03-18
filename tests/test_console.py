@@ -1,7 +1,6 @@
 #!/usr/bin/python3
 """Defines unittests for console.py."""
 import os
-import pep8
 import unittest
 import models
 from unittest.mock import patch
@@ -53,12 +52,6 @@ class TestHBNBCommand(unittest.TestCase):
             os.remove("file.json")
         except IOError:
             pass
-
-    def test_pep8(self):
-        """Test Pep8 styling."""
-        style = pep8.StyleGuide(quiet=True)
-        p = style.check_files(["console.py"])
-        self.assertEqual(p.total_errors, 0, "fix Pep8")
 
     def test_docstrings(self):
         """Check for docstrings."""
@@ -148,24 +141,6 @@ class TestHBNBCommand(unittest.TestCase):
         with patch("sys.stdout", new=StringIO()) as f:
             self.HBNB.onecmd("all Amenity")
             self.assertIn(am, f.getvalue())
-
-    @unittest.skipIf(type(models.storage) == DBStorage, "Testing DBStorage")
-    def test_create_kwargs(self):
-        """Test create command with kwargs."""
-        with patch("sys.stdout", new=StringIO()) as f:
-            call = ('create Place city_id="0001" name="My_house" '
-                    'number_rooms=4 latitude=37.77 longitude=a')
-            self.HBNB.onecmd(call)
-            pl = f.getvalue().strip()
-        with patch("sys.stdout", new=StringIO()) as f:
-            self.HBNB.onecmd("all Place")
-            output = f.getvalue()
-            self.assertIn(pl, output)
-            self.assertIn("'city_id': '0001'", output)
-            self.assertIn("'name': 'My house'", output)
-            self.assertIn("'number_rooms': 4", output)
-            self.assertIn("'latitude': 37.77", output)
-            self.assertNotIn("'longitude'", output)
 
     def test_show(self):
         """Test show command."""

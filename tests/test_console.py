@@ -79,7 +79,6 @@ class TestHBNBCommand(unittest.TestCase):
             with self.assertRaises(SystemExit):
                 self.HBNB.onecmd("quit")
             self.assertEqual("", f.getvalue())
-            
 
     def test_EOF(self):
         """Test that EOF quits."""

@@ -124,24 +124,31 @@ class TestHBNBCommand(unittest.TestCase):
             am = f.getvalue().strip()
         with patch("sys.stdout", new=StringIO()) as f:
             self.HBNB.onecmd("all BaseModel")
+            bm = f.getvalue().strip()
             self.assertIn(bm, f.getvalue())
         with patch("sys.stdout", new=StringIO()) as f:
             self.HBNB.onecmd("all User")
+            us = f.getvalue().strip()
             self.assertIn(us, f.getvalue())
         with patch("sys.stdout", new=StringIO()) as f:
             self.HBNB.onecmd("all State")
+            st = f.getvalue().strip()
             self.assertIn(st, f.getvalue())
         with patch("sys.stdout", new=StringIO()) as f:
             self.HBNB.onecmd("all Place")
+            pl = f.getvalue().strip()
             self.assertIn(pl, f.getvalue())
         with patch("sys.stdout", new=StringIO()) as f:
             self.HBNB.onecmd("all City")
+            ct = f.getvalue().strip()
             self.assertIn(ct, f.getvalue())
         with patch("sys.stdout", new=StringIO()) as f:
             self.HBNB.onecmd("all Review")
+            rv = f.getvalue().strip()
             self.assertIn(rv, f.getvalue())
         with patch("sys.stdout", new=StringIO()) as f:
             self.HBNB.onecmd("all Amenity")
+            am = f.getvalue().strip()
             self.assertIn(am, f.getvalue())
 
     def test_show(self):

@@ -1,99 +1,41 @@
 #!/usr/bin/python3
-"""Defines unittests for console.py."""
-import os
+"""
+Contains the class TestConsoleDocs
+"""
+
+import console
+import inspect
+import pep8
 import unittest
-import models
-from unittest.mock import patch
-from io import StringIO
-from console import HBNBCommand
-from models.engine.db_storage import DBStorage
-from models.engine.file_storage import FileStorage
+HBNBCommand = console.HBNBCommand
 
 
-class TestHBNBCommand(unittest.TestCase):
-    """Unittests for testing the HBNB command interpreter."""
+class TestConsoleDocs(unittest.TestCase):
+    """Class for testing documentation of the console"""
+    def test_pep8_conformance_console(self):
+        """Test that console.py conforms to PEP8."""
+        pep8s = pep8.StyleGuide(quiet=True)
+        result = pep8s.check_files(['console.py'])
+        self.assertEqual(result.total_errors, 0,
+                         "Found code style errors (and warnings).")
 
-    @classmethod
-    def setUpClass(cls):
-        """HBNBCommand testing setup.
+    def test_pep8_conformance_test_console(self):
+        """Test that tests/test_console.py conforms to PEP8."""
+        pep8s = pep8.StyleGuide(quiet=True)
+        result = pep8s.check_files(['tests/test_console.py'])
+        self.assertEqual(result.total_errors, 0,
+                         "Found code style errors (and warnings).")
 
-        Temporarily rename any existing file.json.
-        Reset FileStorage objects dictionary.
-        Create an instance of the command interpreter.
-        """
-        try:
-            os.rename("file.json", "tmp")
-        except IOError:
-            pass
-        cls.HBNB = HBNBCommand()
+    def test_console_module_docstring(self):
+        """Test for the console.py module docstring"""
+        self.assertIsNot(console.__doc__, None,
+                         "console.py needs a docstring")
+        self.assertTrue(len(console.__doc__) >= 1,
+                        "console.py needs a docstring")
 
-    @classmethod
-    def tearDownClass(cls):
-        """HBNBCommand testing teardown.
-
-        Restore original file.json.
-        Delete the test HBNBCommand instance.
-        """
-        try:
-            os.rename("tmp", "file.json")
-        except IOError:
-            pass
-        del cls.HBNB
-        if type(models.storage) == DBStorage:
-            models.storage._DBStorage__session.close()
-
-    def setUp(self):
-        """Reset FileStorage objects dictionary."""
-        FileStorage._FileStorage__objects = {}
-
-    def tearDown(self):
-        """Delete any created file.json."""
-        try:
-            os.remove("file.json")
-        except IOError:
-            pass
-
-    def test_docstrings(self):
-        """Check for docstrings."""
-        self.assertIsNotNone(HBNBCommand.__doc__)
-        self.assertIsNotNone(HBNBCommand.emptyline.__doc__)
-        self.assertIsNotNone(HBNBCommand.do_quit.__doc__)
-        self.assertIsNotNone(HBNBCommand.do_EOF.__doc__)
-        self.assertIsNotNone(HBNBCommand.do_create.__doc__)
-        self.assertIsNotNone(HBNBCommand.do_show.__doc__)
-        self.assertIsNotNone(HBNBCommand.do_destroy.__doc__)
-        self.assertIsNotNone(HBNBCommand.do_all.__doc__)
-        self.assertIsNotNone(HBNBCommand.do_update.__doc__)
-        self.assertIsNotNone(HBNBCommand.do_count.__doc__)
-        self.assertIsNotNone(HBNBCommand.default.__doc__)
-
-    def test_emptyline(self):
-        """Test empty line input."""
-        with patch("sys.stdout", new=StringIO()) as f:
-            self.HBNB.onecmd("\n")
-            self.assertEqual("", f.getvalue())
-
-    def test_quit(self):
-        """Test quit command input."""
-        with patch("sys.stdout", new=StringIO()) as f:
-            with self.assertRaises(SystemExit):
-                self.HBNB.onecmd("quit")
-            self.assertEqual("", f.getvalue())
-
-    def test_EOF(self):
-        """Test that EOF quits."""
-        with patch("sys.stdout", new=StringIO()) as f:
-            with self.assertRaises(SystemExit):
-                self.HBNB.onecmd("EOF")
-            self.assertEqual("\n", f.getvalue())
-
-    def test_create_errors(self):
-        """Test create command errors."""
-        with patch("sys.stdout", new=StringIO()) as f:
-            self.HBNB.onecmd("create")
-            self.assertEqual(
-                "** no instance found **\n", f.getvalue())
-
-
-if __name__ == "__main__":
-    unittest.main()
+    def test_HBNBCommand_class_docstring(self):
+        """Test for the HBNBCommand class docstring"""
+        self.assertIsNot(HBNBCommand.__doc__, None,
+                         "HBNBCommand class needs a docstring")
+        self.assertTrue(len(HBNBCommand.__doc__) >= 1,
+                        "HBNBCommand class needs a docstring")

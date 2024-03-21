@@ -61,11 +61,13 @@ class DBStorage:
     def new(self, obj):
         """Add obj to the current database session."""
         # print(obj.state_id)
+        # City
         if type(obj) == City:
             state = self.__session.query(State).filter(
                 State.id == '{}'.format(obj.state_id)
             ).first()
             state.cities.extend([obj])
+        # Place
         elif type(obj) == Place:
             user = self.__session.query(User).filter(
                 User.id == '{}'.format(obj.user_id)
@@ -75,6 +77,16 @@ class DBStorage:
                 City.id == '{}'.format(obj.city_id)
             ).first()
             city.places.extend([obj])
+        # Reviews
+        elif type(obj) == Review:
+            user = self.__session.query(User).filter(
+                User.id == '{}'.format(obj.user_id)
+            ).first()
+            user.reviews.extend([obj])
+            place = self.__session.query(Place).filter(
+                Place.id == '{}'.format(obj.place_id)
+            ).first()
+            place.reviews.extend([obj])
         else:
             self.__session.add(obj)
 

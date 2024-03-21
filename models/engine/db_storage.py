@@ -9,7 +9,7 @@ from models.place import Place
 from models.review import Review
 from models.state import State
 from models.user import User
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, and_
 from sqlalchemy.orm import relationship
 from sqlalchemy.orm import scoped_session
 from sqlalchemy.orm import sessionmaker
@@ -49,7 +49,7 @@ class DBStorage:
             objs = self.__session.query(State).all()
             objs.extend(self.__session.query(City).all())
             objs.extend(self.__session.query(User).all())
-            # objs.extend(self.__session.query(Place).all())
+            objs.extend(self.__session.query(Place).all())
             # objs.extend(self.__session.query(Review).all())
             # objs.extend(self.__session.query(Amenity).all())
         else:
@@ -65,8 +65,16 @@ class DBStorage:
             state = self.__session.query(State).filter(
                 State.id == '{}'.format(obj.state_id)
             ).first()
-            print(state)
             state.cities.extend([obj])
+        elif type(obj) == Place:
+            user = self.__session.query(User).filter(
+                User.id == '{}'.format(obj.user_id)
+            ).first()
+            user.places.extend([obj])
+            city = self.__session.query(City).filter(
+                City.id == '{}'.format(obj.city_id)
+            ).first()
+            city.places.extend([obj])
         else:
             self.__session.add(obj)
 

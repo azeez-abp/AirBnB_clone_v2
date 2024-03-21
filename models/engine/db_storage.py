@@ -48,10 +48,10 @@ class DBStorage:
         if cls is None:
             objs = self.__session.query(State).all()
             objs.extend(self.__session.query(City).all())
-            objs.extend(self.__session.query(User).all())
-            objs.extend(self.__session.query(Place).all())
-            objs.extend(self.__session.query(Review).all())
-            objs.extend(self.__session.query(Amenity).all())
+            # objs.extend(self.__session.query(User).all())
+            # objs.extend(self.__session.query(Place).all())
+            # objs.extend(self.__session.query(Review).all())
+            # objs.extend(self.__session.query(Amenity).all())
         else:
             if type(cls) == str:
                 cls = eval(cls)
@@ -60,7 +60,15 @@ class DBStorage:
 
     def new(self, obj):
         """Add obj to the current database session."""
-        self.__session.add(obj)
+        # print(obj.state_id)
+        if type(obj) == City:
+            state = self.__session.query(State).filter(
+                State.id == '{}'.format(obj.state_id)
+            ).first()
+            print(state)
+            state.cities.extend([obj])
+        else:
+            self.__session.add(obj)
 
     def save(self):
         """Commit all changes to the current database session."""

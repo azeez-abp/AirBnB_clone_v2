@@ -9,7 +9,7 @@ from models.place import Place
 from models.review import Review
 from models.state import State
 from models.user import User
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, and_
 from sqlalchemy.orm import relationship
 from sqlalchemy.orm import scoped_session
 from sqlalchemy.orm import sessionmaker
@@ -50,8 +50,8 @@ class DBStorage:
             objs.extend(self.__session.query(City).all())
             objs.extend(self.__session.query(User).all())
             objs.extend(self.__session.query(Place).all())
-            objs.extend(self.__session.query(Review).all())
-            objs.extend(self.__session.query(Amenity).all())
+            # objs.extend(self.__session.query(Review).all())
+            # objs.extend(self.__session.query(Amenity).all())
         else:
             if type(cls) == str:
                 cls = eval(cls)
@@ -60,7 +60,35 @@ class DBStorage:
 
     def new(self, obj):
         """Add obj to the current database session."""
-        self.__session.add(obj)
+        # print(obj.state_id)
+        # City
+        if type(obj) == City:
+            state = self.__session.query(State).filter(
+                State.id == '{}'.format(obj.state_id)
+            ).first()
+            state.cities.extend([obj])
+        # Place
+        elif type(obj) == Place:
+            user = self.__session.query(User).filter(
+                User.id == '{}'.format(obj.user_id)
+            ).first()
+            user.places.extend([obj])
+            city = self.__session.query(City).filter(
+                City.id == '{}'.format(obj.city_id)
+            ).first()
+            city.places.extend([obj])
+        # Reviews
+        elif type(obj) == Review:
+            user = self.__session.query(User).filter(
+                User.id == '{}'.format(obj.user_id)
+            ).first()
+            user.reviews.extend([obj])
+            place = self.__session.query(Place).filter(
+                Place.id == '{}'.format(obj.place_id)
+            ).first()
+            place.reviews.extend([obj])
+        else:
+            self.__session.add(obj)
 
     def save(self):
         """Commit all changes to the current database session."""
